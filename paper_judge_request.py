@@ -48,7 +48,7 @@ class PaperJudgeRequest:
             self.logger.debug("Successfully parsed response JSON")
         except Exception as e:
             self.logger.error(f"Failed to parse response JSON: {e}")
-            return None, None
+            return None, None, None
 
         return answer["answer"], answer["explanation"], answer["summary"]
     
