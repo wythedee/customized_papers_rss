@@ -51,16 +51,12 @@ def extract_paper_details(url):
 def parse_huggingface_page(html_content):
     """解析Hugging Face页面内容"""
     papers = []
-    count = 0
     
     try:
         soup = BeautifulSoup(html_content, "html.parser")
         h3s = soup.find_all("h3")
         
         for h3 in h3s:
-            if count >= PAPER_NUMBER:
-                break
-                
             a = h3.find("a")
             if not a:
                 continue
@@ -87,12 +83,11 @@ def parse_huggingface_page(html_content):
             }
             
             # 使用AI判断论文相关性
-            _, _, paper['summary'] = pjr.send_paper_judge_request(abstract)
+            paper['is_qualified'], paper['explanation'], paper['summary'] = pjr.send_paper_judge_request(abstract)
             rc.set_paper(paper, PAPER_EXPIRE_TIME)
 
             logger.info(f"Paper {link} is selected.")
             papers.append(paper)
-            count += 1
                 
     except Exception as e:
         logger.error(f"Failed to parse Hugging Face page: {e}")
