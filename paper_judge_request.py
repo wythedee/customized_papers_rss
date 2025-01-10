@@ -1,7 +1,7 @@
 import requests
 import json
 from logger_config import CustomLogger
-from config import PROMPT, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL
+from config import PROMPT, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL, LANGUAGE
 
 class PaperJudgeRequest:
     def __init__(self, model=LLM_MODEL):
@@ -9,7 +9,7 @@ class PaperJudgeRequest:
         self.url = LLM_BASE_URL
         self.logger = CustomLogger()
 
-    def send_paper_judge_request(self, paper):
+    def send_paper_judge_request(self, paper_abstract):
         self.logger.info(f"Sending paper judge request for model: {self.model}")
         payload = {
             "model": self.model,
@@ -17,9 +17,10 @@ class PaperJudgeRequest:
                 {
                     "role": "user",
                     "content": PROMPT
-                    + paper 
+                    + paper_abstract
                     + "Template: {\"explanation\": \"<explanation>\", \"answer\": <yes/no>, \"summary\": \"<summary>\"}"
-                    + "Note that you must answer in json format. Answer:"
+                    + "Note that you must answer in json format. \"explanation\" and \"summary\" must be in " + LANGUAGE + " language. "
+                    + "\"answer\" must be \"yes\" or \"no\". Answer:"
                 }
             ],
             "top_p": 0.7,
