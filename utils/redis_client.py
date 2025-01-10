@@ -1,9 +1,10 @@
 import redis
 import json
-from logger_config import CustomLogger
+from config import REDIS_HOST, REDIS_PORT
+from utils import CustomLogger
 
 class RedisClient:
-    def __init__(self, host='localhost', port=6379, db=0):
+    def __init__(self, host=REDIS_HOST, port=REDIS_PORT, db=0):
         self.logger = CustomLogger()
         self.logger.info(f"Initializing Redis client with host={host}, port={port}, db={db}")
         try:

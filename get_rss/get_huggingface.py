@@ -1,23 +1,28 @@
-from logger_config import CustomLogger
+import sys
+import os
+
+# Add project root directory to Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import requests
-from bs4 import BeautifulSoup
-from paper_judge_request import PaperJudgeRequest
-from redis_client import RedisClient
-from xml_tools import create_rss_feed
-from xml.dom.minidom import parseString
-import xml.etree.ElementTree as ET
-from config import PAPER_EXPIRE_TIME, PAPER_NUMBER
 import json
+
+from bs4 import BeautifulSoup
+from xml.dom.minidom import parseString
+from xml.etree import ElementTree as ET
+
+from utils import CustomLogger, create_rss_feed, RedisClient
+from llm import PaperJudgeRequest
+from config import PAPER_EXPIRE_TIME, HUGGINFACE_URL, REDIS_DB_HUGGINFACE
 
 logger = CustomLogger()
 pjr = PaperJudgeRequest()
-rc = RedisClient(db=1)  # 使用不同的db以区分arxiv的数据
+rc = RedisClient(db=REDIS_DB_HUGGINFACE)  # 使用不同的db以区分arxiv的数据
 
 def fetch_huggingface_papers():
     """获取Hugging Face论文列表"""
-    BASE_URL = "https://huggingface.co/papers"
     try:
-        page = requests.get(BASE_URL)
+        page = requests.get(HUGGINFACE_URL)
         page.raise_for_status()
         return page.content
     except requests.RequestException as e:
@@ -68,7 +73,6 @@ def parse_huggingface_page(html_content):
             if rc.get_paper(link) and rc.get_paper(link)['is_qualified'] == 'yes':
                 logger.info(f"Paper {link} already exists in redis.")
                 papers.append(rc.get_paper(link))
-                count += 1
                 continue
             
             abstract, date_published = extract_paper_details(link)
@@ -117,11 +121,11 @@ def get_huggingface_papers():
     xml_str = dom.toprettyxml(indent="  ")
     
     # 保存到文件
-    with open("feed_hf.xml", "w", encoding="utf-8") as f:
+    with open("feed/feed_hf.xml", "w", encoding="utf-8") as f:
         f.write(xml_str)
         logger.info(f"Feed saved to feed_hf.xml")
     
-    with open("feed_hf.json", "w", encoding="utf-8") as f:
+    with open("feed/feed_hf.json", "w", encoding="utf-8") as f:
         json.dump(papers, f, ensure_ascii=False, indent=4)
         logger.info(f"Feed saved to feed_hf.json")
 

@@ -1,9 +1,9 @@
+from flask import Flask, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from flask import Flask, jsonify
-from get_arxiv import get_arxiv_rss
-from logger_config import CustomLogger
-from get_huggingface import get_huggingface_papers
+
+from get_rss import get_arxiv_rss, get_huggingface_papers
+from utils import CustomLogger
 
 logger = CustomLogger()
 
@@ -46,16 +46,30 @@ def get_status():
 @app.route('/feed-arxiv', methods=['GET'])
 def feed_arxiv():
     """Get paper list"""
-    with open('feed_arxiv.xml', 'r') as f:
+    with open('feed/feed_arxiv.xml', 'r') as f:
         xml_str = f.read()
     return xml_str
 
 @app.route('/feed-hf', methods=['GET'])
 def feed_hf():
     """Get paper list"""
-    with open('feed_hf.xml', 'r') as f:
+    with open('feed/feed_hf.xml', 'r') as f:
         xml_str = f.read()
     return xml_str
+
+@app.route('/feed-arxiv-json', methods=['GET'])
+def feed_arxiv_json():
+    """Get paper list"""
+    with open('feed/feed_arxiv.json', 'r') as f:
+        json_str = f.read()
+    return json_str
+
+@app.route('/feed-hf-json', methods=['GET'])
+def feed_hf_json():
+    """Get paper list"""
+    with open('feed/feed_hf.json', 'r') as f:
+        json_str = f.read()
+    return json_str
 
 @app.route('/fetch-all', methods=['GET'])
 def fetch_all():

@@ -1,21 +1,28 @@
-from logger_config import CustomLogger
-import xml.etree.ElementTree as ET
+import sys
+import os
+
+# Add project root directory to Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import json
 import requests
 from datetime import datetime
-from paper_judge_request import PaperJudgeRequest
-from redis_client import RedisClient
-from xml_tools import create_rss_feed
+
+from xml.etree import ElementTree as ET
 from xml.dom.minidom import parseString
-from config import PAPER_EXPIRE_TIME, PAPER_NUMBER
-import json
+
+from llm import PaperJudgeRequest
+from utils import CustomLogger, create_rss_feed, RedisClient
+from config import PAPER_EXPIRE_TIME, PAPER_NUMBER, RSS_URL, REDIS_DB_ARXIV
+
 
 logger = CustomLogger()
 pjr = PaperJudgeRequest()
-rc = RedisClient(db=0)
+rc = RedisClient(db=REDIS_DB_ARXIV)
 
 def fetch_arxiv_rss():
     # arXiv CS RSS feed URL
-    url = "http://rss.arxiv.org/rss/cs.AI"
+    url = RSS_URL
     response = requests.get(url)
     return response.content
 
@@ -107,11 +114,11 @@ def get_arxiv_rss():
     xml_str = dom.toprettyxml(indent="  ")
     
     # Save to file
-    with open("feed_arxiv.xml", "w", encoding="utf-8") as f:
+    with open("feed/feed_arxiv.xml", "w", encoding="utf-8") as f:
         f.write(xml_str)
         logger.info(f"Feed saved to feed_arxiv.xml")
 
-    with open("feed_arxiv.json", "w", encoding="utf-8") as f:
+    with open("feed/feed_arxiv.json", "w", encoding="utf-8") as f:
         json.dump(papers, f, ensure_ascii=False, indent=4)
         logger.info(f"Feed saved to feed_arxiv.json")
         

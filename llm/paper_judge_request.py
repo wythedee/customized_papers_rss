@@ -1,6 +1,6 @@
 import requests
 import json
-from logger_config import CustomLogger
+from utils import CustomLogger
 from config import PROMPT, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL, LANGUAGE
 
 class PaperJudgeRequest:
