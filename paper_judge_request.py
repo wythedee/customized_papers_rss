@@ -42,7 +42,7 @@ class PaperJudgeRequest:
         except Exception as e:
             self.logger.error(f"Failed to parse response JSON: {e}")
             self.logger.error(f"Received response content: {response.text}")
-            return None, None
+            return None, None, None
 
         try:
             answer = json.loads(content)
