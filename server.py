@@ -20,6 +20,17 @@ def fetch_arxiv():
     except Exception as e:
         logger.error(f"Failed to fetch RSS: {str(e)}")
         return False
+        
+def fetch_huggingface():
+    """Execute Hugging Face fetching task"""
+    try:
+        logger.info("Start fetching Hugging Face RSS")
+        xml_str = get_huggingface_papers()
+        logger.info("Successfully fetched Hugging Face RSS")
+        return xml_str
+    except Exception as e:
+        logger.error(f"Failed to fetch RSS: {str(e)}")
+        return False
 
 # HTTP 端点
 @app.route('/status')
@@ -46,19 +57,25 @@ def feed_hf():
         xml_str = f.read()
     return xml_str
 
+@app.route('/fetch-all', methods=['GET'])
+def fetch_all():
+    fetch_arxiv()
+    fetch_huggingface()
+    return "Success"
+
 def init_scheduler():
     """Initialize scheduler"""
     scheduler.add_job(
         fetch_arxiv,
-        trigger=CronTrigger(minute='*/1'),
+        trigger=CronTrigger(hour='*/6'),
         id='fetch_arxiv_job',
         name='Fetch arXiv RSS',
         max_instances=1,
         coalesce=True
     )
     scheduler.add_job(
-        get_huggingface_papers,
-        trigger=CronTrigger(minute='*/2'),
+        fetch_huggingface,
+        trigger=CronTrigger(hour='*/6'),
         id='fetch_huggingface_job',
         name='Fetch Hugging Face Papers',
         max_instances=1,
@@ -68,5 +85,6 @@ def init_scheduler():
     logger.info("Scheduler started")
 
 if __name__ == '__main__':
+    fetch_all()
     init_scheduler()
-    app.run(host='localhost', port=5000)
+    app.run(host='0.0.0.0', port=5000)
