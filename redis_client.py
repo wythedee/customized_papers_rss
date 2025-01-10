@@ -32,18 +32,18 @@ class RedisClient:
     
     def set_paper(self, paper, expire_time=172800):
         """
-        存储论文数据并设置过期时间
+        Save paper data and set expiration time
         
         Args:
-            papers: 论文数据列表
-            expire_time: 过期时间（秒），默认172800秒（2天）
+            paper: data of a paper
+            expire_time: expiration time (seconds), default 172800 seconds (2 days)
         """
         self.logger.info(f"Setting papers with expire time: {expire_time} seconds")
         try:
             self.r.setex(
-                paper['link'],          # 键
-                expire_time,          # 过期时间（秒）
-                json.dumps(paper)     # 值
+                paper['link'],          # key
+                expire_time,          # expiration time (seconds)
+                json.dumps(paper)     # value
             )
             self.logger.debug(f"Stored paper with ID: {paper['link']}")
         except Exception as e:

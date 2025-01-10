@@ -35,7 +35,7 @@ def create_rss_feed(papers):
         item = ET.SubElement(channel, 'item')
         ET.SubElement(item, 'title').text = paper['title']
         ET.SubElement(item, 'link').text = paper['link']
-        ET.SubElement(item, 'description').text = paper['summary'] + "\n" + paper['explanation'] + "\n" + paper['description'] if "summary" in paper and "explanation" in paper else paper['description']
+        ET.SubElement(item, 'description').text = ("Explanation: " + paper['explanation'] + "------------------------------" + "Summary: " + paper['summary'] + "------------------------------" + "Abstract: " + paper['description']) if "summary" in paper and "explanation" in paper else paper['description']
         ET.SubElement(item, 'guid', {'isPermaLink': 'false'}).text = f"oai:arXiv.org:{paper['link'].split('/')[-1]}"
         ET.SubElement(item, 'category').text = 'cs.AI'
         ET.SubElement(item, 'pubDate').text = paper['date_published']
