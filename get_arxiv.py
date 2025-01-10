@@ -38,11 +38,16 @@ def parse_arxiv_feed(xml_content):
         # Extract basic information
         link = item.find('link').text
 
-        if rc.get_paper(link) and rc.get_paper(link)['is_qualified'] == 'yes':
+        if rc.get_paper(link):
             logger.info(f"Paper {link} already exists in redis.")
-            papers.append(rc.get_paper(link))
-            count += 1
-            continue
+            if rc.get_paper(link)['is_qualified'] == 'yes':
+                logger.info(f"Paper {link} is qualified.")
+                papers.append(rc.get_paper(link))
+                count += 1
+                continue
+            else:
+                logger.info(f"Paper {link} is not qualified.")
+                continue
 
         title = item.find('title').text
         description = item.find('description').text
@@ -70,6 +75,8 @@ def parse_arxiv_feed(xml_content):
         }
 
         paper['is_qualified'], paper['explanation'], paper['summary'] = pjr.send_paper_judge_request(abstract)
+        if paper['is_qualified'] is None:
+            continue
         rc.set_paper(paper, PAPER_EXPIRE_TIME)
         if paper['is_qualified'] == 'yes' or paper['is_qualified'] == 'Yes':
             logger.info(f"Paper {link} is selected.")
