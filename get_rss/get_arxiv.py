@@ -47,13 +47,14 @@ def parse_arxiv_feed(xml_content):
 
         if rc.get_paper(link):
             logger.debug(f"Paper {link} already exists in redis.")
-            if rc.get_paper(link)['is_qualified'] == 'yes':
-                logger.debug(f"Paper {link} is qualified.")
+            paper = rc.get_paper(link)
+            if paper['is_qualified'] == 'yes' or paper['is_qualified'] == 'Yes' or paper['is_qualified'] == '是':
+                logger.debug(f"Paper {link} is qualified. Current papers count: {count + 1}.")
                 papers.append(rc.get_paper(link))
                 count += 1
                 continue
             else:
-                logger.debug(f"Paper {link} is not qualified.")
+                logger.debug(f"Paper {link} is not qualified. Current papers count: {count}.")
                 continue
 
         title = item.find('title').text
@@ -85,12 +86,12 @@ def parse_arxiv_feed(xml_content):
         if paper['is_qualified'] is None:
             continue
         rc.set_paper(paper, PAPER_EXPIRE_TIME)
-        if paper['is_qualified'] == 'yes' or paper['is_qualified'] == 'Yes':
-            logger.debug(f"Paper {link} is selected.")
+        if paper['is_qualified'] == 'yes' or paper['is_qualified'] == 'Yes' or paper['is_qualified'] == '是':
+            logger.debug(f"Paper {link} is selected. Current papers count: {count + 1}")
             papers.append(paper)
             count += 1
         else:
-            logger.debug(f"Paper {link} is not related to Misinformation Detection.")
+            logger.debug(f"Paper {link} is not related to Misinformation Detection.  Current papers count: {count}.")
         
 
     return papers

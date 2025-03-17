@@ -1,22 +1,33 @@
 # Customize
 YOUR_FIELD = "multimodal misinformation detection"
-FIELD_DESCRIPTION = "This research field focus on image-text out-of-context misinformation detection. \
-        This kind of misinformation is formed with wrongly matched image and text. \
-        So you nedd to focus more on the alignment between image and text or other modalities and reasoning for the ability of finding the mismatched part. \
-        Also please pay attention to 'causal inference' related papers. \
-        Multimodal or LLM related papers should be considered, too"
-LANGUAGE = "Chinese"
-PROMPT = f"Please read the following abstract of a paper and evaluate if the research \
-        could be adapted to or is somehow related to the field of {YOUR_FIELD}. \
-        {FIELD_DESCRIPTION} \
-        Provide a short explanation for your reasoning. Also a sentence of summarization for the paper, including \
-        the motivation, the key methods, contributions, and the results. Abstract: " 
+FIELD_DESCRIPTION = (
+    "This research field focuses on detecting image-text out-of-context misinformation, "
+    "where misinformation arises from mismatched images and text. "
+    "Emphasis should be placed on analyzing alignment between image, text, or other modalities, "
+    "and reasoning to identify discrepancies. "
+    "Additionally, consider papers related to 'causal inference,' "
+    "as well as those involving multimodal approaches or large language models (LLMs)."
+)
 
-PAPER_NUMBER = 20
+LANGUAGE = "Chinese"
+
+PROMPT = (
+    f"Please evaluate whether the following paper abstract aligns with "
+    f"or could be adapted to the field of {YOUR_FIELD}. "
+    f"{FIELD_DESCRIPTION} "
+    f"However, also include it in my customized reading list if it offers valuable insights, "
+    f"learning opportunities, or practical help, even if it’s not directly related to {YOUR_FIELD}. "
+    f"Provide a concise explanation, including how its ideas could benefit my research or skills in {YOUR_FIELD}. "
+    f"Additionally, summarize the paper in one sentence, covering its motivation, "
+    f"key methods, contributions, and results. "
+    f"Abstract: "
+)
+
+PAPER_NUMBER = 10
 
 # LLM
 LLM_BASE_URL = "https://api.siliconflow.cn/v1/chat/completions"
-LLM_API_KEY = ""
+LLM_API_KEY = "sk-yyexckoribsghgszghxqrejfjsotcxfwkcjpwgngocyrngcg"
 LLM_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
 
 # RSS
