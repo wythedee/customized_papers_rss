@@ -46,14 +46,14 @@ def parse_arxiv_feed(xml_content):
         link = item.find('link').text
 
         if rc.get_paper(link):
-            logger.info(f"Paper {link} already exists in redis.")
+            logger.debug(f"Paper {link} already exists in redis.")
             if rc.get_paper(link)['is_qualified'] == 'yes':
-                logger.info(f"Paper {link} is qualified.")
+                logger.debug(f"Paper {link} is qualified.")
                 papers.append(rc.get_paper(link))
                 count += 1
                 continue
             else:
-                logger.info(f"Paper {link} is not qualified.")
+                logger.debug(f"Paper {link} is not qualified.")
                 continue
 
         title = item.find('title').text
@@ -86,11 +86,11 @@ def parse_arxiv_feed(xml_content):
             continue
         rc.set_paper(paper, PAPER_EXPIRE_TIME)
         if paper['is_qualified'] == 'yes' or paper['is_qualified'] == 'Yes':
-            logger.info(f"Paper {link} is selected.")
+            logger.debug(f"Paper {link} is selected.")
             papers.append(paper)
             count += 1
         else:
-            logger.info(f"Paper {link} is not related to Misinformation Detection.")
+            logger.debug(f"Paper {link} is not related to Misinformation Detection.")
         
 
     return papers

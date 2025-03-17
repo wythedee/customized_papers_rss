@@ -1,5 +1,7 @@
 import requests
 import json
+import sys
+import os
 from utils import CustomLogger
 from config import PROMPT, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL, LANGUAGE
 
@@ -10,7 +12,7 @@ class PaperJudgeRequest:
         self.logger = CustomLogger()
 
     def send_paper_judge_request(self, paper_abstract):
-        self.logger.info(f"Sending paper judge request for model: {self.model}")
+        self.logger.debug(f"Sending paper judge request for model: {self.model}")
         payload = {
             "model": self.model,
             "messages": [
@@ -35,8 +37,7 @@ class PaperJudgeRequest:
         }
 
         response = requests.request("POST", self.url, json=payload, headers=headers)
-        self.logger.info(f"Received response with status code: {response.status_code}")
-
+        print(response)
         try:
             content = json.loads(response.text.replace("```json", "").replace("```", ""))["choices"][0]["message"]["content"]
         except Exception as e:
@@ -46,7 +47,7 @@ class PaperJudgeRequest:
 
         try:
             answer = json.loads(content)
-            self.logger.debug("Successfully parsed response JSON")
+            self.logger.debug("Return value: " + answer)
         except Exception as e:
             self.logger.error(f"Failed to parse response JSON: {e}")
             return None, None, None

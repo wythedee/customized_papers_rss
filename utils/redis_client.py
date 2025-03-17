@@ -39,7 +39,7 @@ class RedisClient:
             paper: data of a paper
             expire_time: expiration time (seconds), default 172800 seconds (2 days)
         """
-        self.logger.info(f"Setting papers with expire time: {expire_time} seconds")
+        self.logger.debug(f"Setting papers with expire time: {expire_time} seconds")
         try:
             self.r.setex(
                 paper['link'],          # key
@@ -59,7 +59,7 @@ class RedisClient:
                 paper = json.loads(data)
                 self.logger.debug(f"Successfully retrieved paper with ID: {link}")
                 return paper
-            self.logger.info(f"No paper found with ID: {link}")
+            self.logger.debug(f"No paper found with ID: {link}")
             return None
         except Exception as e:
             self.logger.error(f"Error retrieving paper with ID {link}: {e}")

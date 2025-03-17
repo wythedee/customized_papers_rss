@@ -71,7 +71,7 @@ def parse_huggingface_page(html_content):
             
             # 检查Redis缓存
             if rc.get_paper(link) and rc.get_paper(link)['is_qualified'] == 'yes':
-                logger.info(f"Paper {link} already exists in redis.")
+                logger.debug(f"Paper {link} already exists in redis.")
                 papers.append(rc.get_paper(link))
                 continue
             
@@ -90,7 +90,7 @@ def parse_huggingface_page(html_content):
             paper['is_qualified'], paper['explanation'], paper['summary'] = pjr.send_paper_judge_request(abstract)
             rc.set_paper(paper, PAPER_EXPIRE_TIME)
 
-            logger.info(f"Paper {link} is selected.")
+            logger.debug(f"Paper {link} is selected.")
             papers.append(paper)
                 
     except Exception as e:
